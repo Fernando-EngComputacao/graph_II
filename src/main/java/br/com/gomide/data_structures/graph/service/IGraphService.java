@@ -1,4 +1,4 @@
- package br.com.gomide.data_structures.graph.service;
+package br.com.gomide.data_structures.graph.service;
 
 import java.util.List;
 
@@ -14,6 +14,8 @@ public interface IGraphService {
 
 	public void connectNode(String firstNode, String secondNode, Graph graph);
 
+	public void connectNode(String firstNode, String secondNode, Integer weight, Graph graph);
+
 	public int countLoops(Graph graph);
 
 	public int countMultipleLink(Graph graph);
@@ -27,6 +29,10 @@ public interface IGraphService {
 	public String showPath(String origin, String destination, DirectedGraph graph);
 
 	public String showPath(String origin, String destination, NonDirectedGraph graph);
+
+	public String showShortestPath(String origin, String destination, DirectedGraph graph);
+
+	public String showShortestPath(String origin, String destination, NonDirectedGraph graph);
 
 	public String toString(Graph graph);
 
