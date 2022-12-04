@@ -3,6 +3,8 @@ package br.com.gomide.data_structures.graph.model;
 
 public class Vertice implements Comparable<Vertice>{
 	private String label;
+	private Vertice father = null;
+	private Integer distance = Integer.MAX_VALUE;
 	
 	public Vertice(String label) {
 		this.label = label;
@@ -14,7 +16,23 @@ public class Vertice implements Comparable<Vertice>{
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	public Vertice getFather() {
+		return father;
+	}
 
+	public void setFather(Vertice father) {
+		this.father = father;
+	}
+
+	public Integer getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Integer distance) {
+		this.distance = distance;
+	}
+	
     @Override
     public int compareTo(Vertice vertice) {
         return (this.label.equalsIgnoreCase(vertice.label) ? 0: -1);
@@ -41,4 +59,5 @@ public class Vertice implements Comparable<Vertice>{
 	public String toString() {
 		return this.label;
 	}
+
 }

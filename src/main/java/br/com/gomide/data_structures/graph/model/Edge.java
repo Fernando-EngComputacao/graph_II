@@ -5,10 +5,17 @@ public class Edge implements Comparable<Edge>{
 	private Vertice startpoint;
 	private Vertice endpoint;
 	private boolean isResolved = false;
+	private Integer weight = null;
 	
 	public Edge(Vertice startpoint, Vertice endpoint) {
 		this.startpoint = startpoint;
 		this.endpoint = endpoint;
+	}
+	
+	public Edge(Vertice startpoint, Vertice endpoint, int weight) {
+		this.startpoint = startpoint;
+		this.endpoint = endpoint;
+		this.weight = weight;
 	}
 	
 	public Vertice getStartpoint() {
@@ -30,8 +37,15 @@ public class Edge implements Comparable<Edge>{
 		this.isResolved = !this.isResolved;
 	}
 	
-	
-    @Override
+    public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
+	}
+
+	@Override
     public int compareTo(Edge edge) {
     	if ((this.startpoint.equals(edge.startpoint)) && (this.endpoint.equals(edge.endpoint)))
 			return 0;
@@ -73,7 +87,9 @@ public class Edge implements Comparable<Edge>{
 
 	public String toString(boolean isDirected) {
     	String arrow = isDirected ? " -> ": " ";
-		return this.getStartpoint().getLabel() + arrow + this.getEndpoint().getLabel();	
+    	String weight = this.weight != null ? " Weight: " + this.weight: "";
+    	
+		return this.getStartpoint().getLabel() + arrow + this.getEndpoint().getLabel() + weight;	
     }
 	
 	public String toString() {

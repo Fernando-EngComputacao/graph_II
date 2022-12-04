@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import br.com.gomide.data_structures.graph.model.DirectedGraph;
 import br.com.gomide.data_structures.graph.model.Graph;
@@ -30,7 +31,7 @@ public class GraphService implements IGraphService {
 
 	@Override
 	public void connectNode(String firstNode, String secondNode, Integer weight, Graph graph) {
-		// TODO Auto-generated method stub
+		graph.addEdge(firstNode, secondNode, weight);
 
 	}
 
@@ -80,60 +81,12 @@ public class GraphService implements IGraphService {
 
 	@Override
 	public String showPath(String origin, String destination, DirectedGraph graph) {
-		List<String> list = new ArrayList<>();
-		String way = "";
-
-		for (Vertice element : graph.getVertice()) {
-			List<String> inside = new ArrayList<>();
-			graph.getEdges().stream().filter(edge -> edge.getStartpoint().getLabel().equals(element.getLabel()))
-					.forEach(point -> {
-						inside.add(point.toString().substring(2, 3));
-					});
-			Collections.sort(inside);
-			for (String value : inside) {
-				list.add(element.getLabel());
-				list.add(value);
-			}
-		}
-
-		for (String value : list)
-			way += " " + value;
-
-		if ((way.contains(destination) && way.contains(origin)) == true)
-			way = "INVALID PATH";
-		else
-			way = "Start ->" + way + " -> End";
-
-		return way;
+		return this.setUpPath(origin, destination, graph, true);
 	}
 
 	@Override
 	public String showPath(String origin, String destination, NonDirectedGraph graph) {
-		List<String> list = new ArrayList<>();
-		String way = "";
-
-		for (Vertice element : graph.getVertice()) {
-			List<String> inside = new ArrayList<>();
-			graph.getEdges().stream().filter(edge -> edge.getStartpoint().getLabel().equals(element.getLabel()))
-					.forEach(point -> {
-						inside.add(point.toString().substring(2, 3));
-					});
-			Collections.sort(inside);
-			for (String value : inside) {
-				list.add(element.getLabel());
-				list.add(value);
-			}
-		}
-
-		for (String value : list)
-			way += " " + value;
-
-		if ((way.contains(destination) && way.contains(origin)) == false)
-			way = "INVALID PATH";
-		else
-			way = "Start ->" + way + " -> End";
-
-		return way;
+		return this.setUpPath(origin, destination, graph, false);
 	}
 
 	@Override
@@ -143,14 +96,12 @@ public class GraphService implements IGraphService {
 
 	@Override
 	public String showShortestPath(String origin, String destination, DirectedGraph graph) {
-		// TODO Auto-generated method stub
-		return null;
+		return graph.getShortestPathFrom(origin, destination);
 	}
 
 	@Override
 	public String showShortestPath(String origin, String destination, NonDirectedGraph graph) {
-		// TODO Auto-generated method stub
-		return null;
+		return graph.getShortestPathFrom(origin, destination);
 	}
 	
 	private List<Vertice> walkInGraphBy(List<Vertice> vertices, List<Edge> edges, Vertice origin) {
@@ -169,4 +120,38 @@ public class GraphService implements IGraphService {
 		return vertices;
 	}
 
+	private String setUpPath(String origin, String destination, Graph graph, boolean isDirected) {
+		List<String> list = new ArrayList<>();
+		
+		if (isDirected && !isValidPath(origin, destination, graph.getEdges())) {
+			return "INVALID PATH";
+		} 
+		
+		for (Vertice vertice : graph.getVertice()) {
+			 List<String> p = graph.getEdges()
+			.stream()
+			.filter(edge -> edge.getStartpoint().equals(vertice))
+			.map(point -> point.getEndpoint().toString())
+			.sorted()
+			.map(point -> vertice + " " + point)
+			.collect(Collectors.toList());
+			 
+			 list = Stream.concat(list.stream(), p.stream()).collect(Collectors.toList());
+		}
+		
+		String way = list.stream().reduce("Start ->", (previous, current) -> (previous + " " + current)) + " -> End";
+		
+		if (!(way.contains(destination) && way.contains(origin))) {
+			way = "INVALID PATH";
+		}
+		
+		return way;
+	}
+	
+	private boolean isValidPath(String origin, String destination, List<Edge> edges) {
+		int originStart = (int) edges.stream().filter(e -> e.getStartpoint().getLabel().equals(origin)).count();
+		int destinationEnd = (int) edges.stream().filter(e -> e.getEndpoint().getLabel().equals(destination)).count();
+		
+		return (originStart >= 1) && (destinationEnd >= 1);
+	}
 }
